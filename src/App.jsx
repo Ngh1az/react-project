@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+ï»¿import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
 
 const GAME_WIDTH = 800;
@@ -31,7 +31,6 @@ export default function App() {
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
-    // FIX: Player now spawns at y=500 to avoid being stuck inside the center obstacle!
     let player = { x: 400, y: 500, angle: 0, speed: 3.5, radius: 15, cooldown: 0, hp: 100, maxHp: 100 };
     let bullets = [];
     let enemies = [];
@@ -70,14 +69,12 @@ export default function App() {
     const update = () => {
       if (isGameOver) return;
       
-      // M?I: Di chuy?n tr?c ti?p b?ng phím W A S D thay vì di?u khi?n vô lang xoay vòng
       let dx = 0; let dy = 0;
       if (keys['w'] || keys['arrowup'] || keys['KeyW'] || keys['ArrowUp']) dy -= player.speed;
       if (keys['s'] || keys['arrowdown'] || keys['KeyS'] || keys['ArrowDown']) dy += player.speed;
       if (keys['a'] || keys['arrowleft'] || keys['KeyA'] || keys['ArrowLeft']) dx -= player.speed;
       if (keys['d'] || keys['arrowright'] || keys['KeyD'] || keys['ArrowRight']) dx += player.speed;
 
-      // Chu?n hoá t?c d? khi di chéo
       if (dx !== 0 && dy !== 0) {
         const length = Math.sqrt(dx*dx + dy*dy);
         dx = (dx/length) * player.speed;
@@ -86,7 +83,6 @@ export default function App() {
 
       let nextX = player.x + dx;
       
-      // X? lý tru?t d?c theo tu?ng cho tr?c X
       let hitObsX = false;
       for (let obs of obstacles) {
         if (checkCollision(nextX, player.y, player.radius, obs)) { hitObsX = true; break; }
@@ -95,7 +91,6 @@ export default function App() {
         player.x = nextX;
       }
 
-      // X? lý tru?t d?c theo tu?ng cho tr?c Y
       let nextY = player.y + dy;
       let hitObsY = false;
       for (let obs of obstacles) {
@@ -105,10 +100,8 @@ export default function App() {
         player.y = nextY;
       }
 
-      // Ng?m theo hu?ng chu?t
       player.angle = Math.atan2(mouseRef.current.y - player.y, mouseRef.current.x - player.x);
 
-      // B?n b?ng Chu?t trái ho?c Phím Space
       if (player.cooldown > 0) player.cooldown--;
       if ((keys[' '] || keys['space'] || mouseRef.current.isDown) && player.cooldown === 0) {
         bullets.push({
@@ -122,7 +115,6 @@ export default function App() {
         player.cooldown = 15;
       }
 
-      // Update Bullets
       for (let i = bullets.length - 1; i >= 0; i--) {
         let b = bullets[i];
         b.x += b.vx;
@@ -160,7 +152,6 @@ export default function App() {
         }
       }
 
-      // Khó lên theo th?i gian
       let spawnRate = Math.max(800, 2000 - currentScore * 10);
       if (Date.now() - lastEnemySpawn > spawnRate) {
         spawnEnemy();
